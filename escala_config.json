@@ -1,0 +1,36 @@
+{
+  "team": [
+    "IZABELA",
+    "SARAI",
+    "MARCELA",
+    "DEBORA",
+    "JULIA",
+    "JOICE",
+    "PATRICIA",
+    "CARLA",
+    "RAQUEL",
+    "LARISSA"
+  ],
+  "sectors": [
+    {
+      "name": "PTW",
+      "capacity": 1
+    },
+    {
+      "name": "CELULAR",
+      "capacity": 2
+    },
+    {
+      "name": "PRODUTO",
+      "capacity": 2
+    },
+    {
+      "name": "LEVES",
+      "capacity": 2
+    },
+    {
+      "name": "APOIO",
+      "capacity": 1
+    }
+  ]
+}

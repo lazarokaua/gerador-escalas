@@ -1,0 +1,21 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Streamlit local config and cache
+.streamlit/
+
+# Excel generated sheets
+*.xlsx
+
+# PyInstaller / Executable builds
+build/
+dist/
+*.spec
