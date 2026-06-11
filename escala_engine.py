@@ -94,16 +94,17 @@ class ScaleEngine:
         1. Rotate the global team list by the week number to get a fresh
            starting order for this week.
         2. Remove the APOIO person (last in queue) – fixed for the whole week.
-        3. For each working day:
+        3. Compute a daily rotation_step that is guaranteed to be >= 1.
+           When total_active_slots % available_size == 0 (e.g. 9 slots for
+           9 people), advancing by the raw slot count would produce a zero
+           modulo, keeping the queue frozen. In that case the step falls back
+           to 1 so real rotation still happens every day.
+        4. For each working day:
            a. Build the ordered slot list from the current queue position.
-           b. Map each slot (sector, index) to the person at that position.
-           c. Detect conflicts with yesterday's assignments and swap the
+           b. Detect conflicts with yesterday's assignments and swap the
               conflicting person with the next available non-conflicting
-              neighbour. This keeps the rotation pattern intact while
-              satisfying the no-repeat constraint.
-           d. Advance the queue by the total number of active slots so that
-              tomorrow's first person is the one who comes right after today's
-              last person – preserving the predictable sector sequence.
+              neighbour.
+           c. Advance the queue by rotation_step.
 
         :param week_number: ISO week number to generate the scale for.
         :return: List of dicts mapping sector names to assigned collaborator names.
@@ -134,6 +135,12 @@ class ScaleEngine:
 
         if available_size == 0:
             raise ValueError("Equipe insuficiente para preencher os setores após reservar o APOIO.")
+
+        # Guard: when slots == people (or any multiple), raw_step would be 0
+        # and the queue would never rotate. Fall back to 1 to ensure daily
+        # rotation regardless of team size vs slot count.
+        raw_step = total_active_slots % available_size
+        rotation_step = raw_step if raw_step != 0 else 1
 
         scale_data: List[Dict[str, str]] = []
         # Maps person → sector name for the previous day (used for conflict detection)
@@ -174,8 +181,9 @@ class ScaleEngine:
             scale_data.append(day_allocations)
             previous_day_assignments = today_assignments
 
-            # Advance the rotation by total active slots (deterministic, predictable)
-            rotation_offset = (rotation_offset + total_active_slots) % available_size
+            # Advance the rotation by rotation_step (≥ 1) so the queue always
+            # moves forward, even when total_active_slots % available_size == 0.
+            rotation_offset = (rotation_offset + rotation_step) % available_size
 
         return scale_data
 
