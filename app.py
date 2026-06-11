@@ -128,11 +128,9 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Initialize ScaleEngine in session state
-if "engine" not in st.session_state:
-    st.session_state.engine = ScaleEngine()
-
-engine: ScaleEngine = st.session_state.engine
+# Always create a fresh engine on each run to guarantee the latest config
+# from disk is used (config changes are persisted immediately via save_config).
+engine: ScaleEngine = ScaleEngine()
 
 # Header section
 st.markdown('<h1 class="header-title">📅 Gerador de Escala Semanal</h1>', unsafe_allow_html=True)
